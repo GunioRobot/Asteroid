@@ -16,7 +16,7 @@ from django.utils import simplejson
 from amqplib import client_0_8 as amqp
 
 # devine the location of your message queue
-QUEUE_ADDRESS = '172.16.142.128'
+QUEUE_ADDRESS = '127.0.0.1'
 DEBUG = True
 
 def recv_callback(msg):

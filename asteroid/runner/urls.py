@@ -18,7 +18,7 @@ urlpatterns = patterns('',
     (r'^commands/(?P<command>[-\w]+)/run/$', run_command),
     (r'^commands/(?P<command>[-\w]+)/(?P<run>\d+)/hook/$', run_web_hook),
     (r'^commands/(?P<command>[-\w]+)/$', show_command),
-    (r'^assets/(?P<path>.*)$', 'django.views.static.serve', {
+    (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
         'document_root': settings.MEDIA_ROOT
     }),
 )
