@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import os,sys
 
 # The absolute path to this settings.py file
@@ -14,7 +13,7 @@ LANGUAGE_CODE = 'de-de'
 SITE_ID = 1
 USE_I18N = False
 
-MEDIA_ROOT = path('media')
+MEDIA_ROOT = path('../media')
 MEDIA_URL = '/media'
 ADMIN_MEDIA_PREFIX = '/media/admin/'
 
@@ -26,10 +25,20 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.eggs.load_template_source',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.contrib.messages.context_processors.messages",
+    "django.core.context_processors.request",
+)
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'runner.middleware.LoginRequiredMiddleware',
 )
 
 ROOT_URLCONF = 'runner.urls'
@@ -48,11 +57,12 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'runner',
     'django_extensions',
+    'guardian',
 )
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-DATABASES = { 'default': { 'NAME': path('dev.db'), 'ENGINE': 'django.db.backends.sqlite3', } }
+DATABASES = { 'default': { 'NAME': path('../dev.db'), 'ENGINE': 'django.db.backends.sqlite3', } }
 
 # run "python -m smtpd -n -c DebuggingServer localhost:1025" to see outgoing
 # messages dumped to the terminal
@@ -61,11 +71,23 @@ EMAIL_PORT = 1025
 DEFAULT_FROM_EMAIL = 'webmaster@localhost'
 
 # application specific commands
-QUEUE_COMMANDS = True
-QUEUE_ADDRESS = '127.0.0.1'
+QUEUE_COMMANDS=False
+#QUEUE_COMMANDS = True
+#QUEUE_ADDRESS = '127.0.0.1'
 
 # used for the callback
 DOMAIN = "http://localhost:8020"
 
 # ignore django code when we calculate coverage
 EXCLUDE_FROM_COVERAGE = ['django']
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
+)
+ANONYMOUS_USER_ID = -1
+LOGIN_URL="/admin"
+LOGIN_EXEMPT_URLS = (
+    r'^admin/',
+    r'^media/', # allow the entire /media/* subsection
+) 

@@ -2,10 +2,31 @@
 
 from django.contrib import admin
 from django import forms
-
 from runner.models import Command, Run
+from django.contrib.contenttypes.generic import GenericTabularInline
+from django.contrib.flatpages.models import FlatPage
+from django.contrib.flatpages.admin import FlatPageAdmin as FPAdmin
 
-class CommandAdmin(admin.ModelAdmin):
+from guardian.models import  UserObjectPermission, GroupObjectPermission
+
+class GroupObjectPermissionInline(GenericTabularInline):
+    model = GroupObjectPermission
+    raw_id_fields = ['group']
+    extra = 1
+class UserObjectPermissionInline(GenericTabularInline):
+    model = UserObjectPermission
+    raw_id_fields = ['user']
+    extra = 1
+
+class ObjectPermissionMixin(object):
+    def has_change_permission(self, request, obj=None):
+        opts = self.opts
+        return request.user.has_perm(opts.app_label + '.' + opts.get_change_permission(), obj)
+    def has_delete_permission(self, request, obj=None):
+        opts = self.opts
+        return request.user.has_perm(opts.app_label + '.' + opts.get_delete_permission(), obj)
+
+class CommandAdmin(ObjectPermissionMixin, admin.ModelAdmin):
     "The command admin is used to populate the available commands"
     search_fields = ['title', 'description', 'command_to_run']
     list_display = ('title', 'description', 'run_link')
@@ -23,6 +44,7 @@ class CommandAdmin(admin.ModelAdmin):
             }
         ),
     )
+    inlines = [UserObjectPermissionInline, GroupObjectPermissionInline]
 
 class RunAdmin(admin.ModelAdmin):
     "The run admin is really only available for completeness"
@@ -45,3 +67,6 @@ class RunAdmin(admin.ModelAdmin):
 # register our admins
 admin.site.register(Command, CommandAdmin)
 admin.site.register(Run, RunAdmin)
+
+
+

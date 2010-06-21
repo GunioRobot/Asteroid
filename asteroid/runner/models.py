@@ -1,7 +1,8 @@
 "Models for Asteroid"
 
-import commands
+import subprocess
 from datetime import datetime
+import time
 
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
@@ -9,6 +10,7 @@ from django.conf import settings
 from django.db import models
 
 from amqplib import client_0_8 as amqp
+from eventlet.green.subprocess import subprocess_orig
 
 # set of available statuses for runs
 STATUSES=(
@@ -53,6 +55,7 @@ class Run(models.Model):
             status = self.status
         return "%s %s on %s" % (self.command, status, self.created_date.strftime("%a %B %Y at %H:%M"))
 
+
 class Command(models.Model):
     "Commands represent shell scripts which can be run from the web front end"
     title = models.CharField(max_length=200, help_text="A descritive name for this command.")
@@ -61,6 +64,9 @@ class Command(models.Model):
     updated_date = models.DateTimeField(default=datetime.today)
     description = models.TextField(null=True, blank=True, help_text="Include a more detailed description of this command.")
     command_to_run = models.TextField(help_text="A valid shell command. Be carefull as this is going to be executed as the web server user when the command is run.")
+    
+    class Meta:
+        permissions = ( ('view_command', 'View Command'), ('execute_command', 'Execute Command'), )
     
     def __unicode__(self):
         "friendly output"
@@ -89,10 +95,15 @@ class Command(models.Model):
         run.save()
         
         # execute the command and store the output and error code
-        code, output = commands.getstatusoutput(self.command_to_run)
+        p = subprocess.Popen(self.command_to_run, shell=True, stdout = subprocess.PIPE)
+        output=""
+        while 1:
+            o = p.stdout.readline()
+            if o == '' and p.poll() != None: break
+            output+=o
 
         # 0 is good, anything else is an error state
-        if code == 0:
+        if p.returncode == 0:
             run.status = "succeeded"
         else:
             run.status = "failed"

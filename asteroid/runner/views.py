@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 "Views for Asteroid"
 
 from django.shortcuts import render_to_response
@@ -19,14 +20,18 @@ def run_command(request, command):
     # check we have a valid command, if not throw a 404
     existing_command = get_object_or_404(Command, slug__iexact=command)
 
-    # check whether we're using the message queue or not
-    if settings.QUEUE_COMMANDS:
-        run = existing_command.queue_run()
-    else:
-        run = existing_command.run()
-    
-    # redirect to the run that's been created
-    return HttpResponseRedirect(run.get_absolute_url())
+    if request.user.has_perm('view', existing_command):
+        
+        # check whether we're using the message queue or not
+        if settings.QUEUE_COMMANDS:
+            run = existing_command.queue_run()
+        else:
+            run = existing_command.run()
+        
+        # redirect to the run that's been created
+        return HttpResponseRedirect(run.get_absolute_url())
+
+    else: return Http404()
         
 def run_web_hook(request, command, run):
     """

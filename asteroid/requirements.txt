@@ -1,0 +1,4 @@
+django
+django-entensions
+amqplib
+django-guardian
