@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 "Setup the Django administration"
 
 from django.contrib import admin

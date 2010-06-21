@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from test_extensions.django_common import DjangoCommon
 
 from django.conf import settings

@@ -1,4 +1,4 @@
 django
-django-entensions
+django-extensions
 amqplib
 django-guardian

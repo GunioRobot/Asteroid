@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 "Template tag library"
 
 from django import template
