@@ -29,13 +29,13 @@
   {% if runs %}
   <ol class="runs">
   {% for run in runs %}
-    {# % get_obj_perms request.user for command as "runner_command_permissions" % #}
-    {# % if "execute_command" in runner_command_permissions % #}
+    {% get_obj_perms request.user for run.command as "runner_command_permissions" %}
+    {% if "execute_command" in runner_command_permissions %}
         <li class="{{run.status}}">
           <a href="{{run.get_absolute_url}}">{{run.command.title}} {{run.status|correct_status}}</a>
           <span>(<time datetime="{{run.updated_date}}">{{run.updated_date|date:"jS F Y \a\t H:i"}}</time>)</span>
         </li>
-    {# % endif % #}
+    {% endif %}
   {% endfor %}
   </ol>
   {% endif %}

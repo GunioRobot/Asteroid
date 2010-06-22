@@ -54,7 +54,7 @@ class Run(models.Model):
             status = "in progress"
         else:
             status = self.status
-        return "%s %s on %s" % (self.command, status, self.created_date.strftime("%a %B %Y at %H:%M"))
+        return u"%s %s on %s" % (self.command, status, self.created_date.strftime("%a %B %Y at %H:%M"))
 
 
 class Command(models.Model):
@@ -71,7 +71,7 @@ class Command(models.Model):
     
     def __unicode__(self):
         "friendly output"
-        return self.title
+        return unicode(self.title)
 
     def status(self):
         "the status of the command is the status of the last run"

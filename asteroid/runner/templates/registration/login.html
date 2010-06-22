@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    {% if form.errors %}
+        <p style="padding: 5px; border: 1px solid red; background:#FFEBCD; color:red">
+            Der Login-Vorgang war nicht erfolgreich. Die Benutzer/Passwort-Kombination ist im System nicht bekannt.
+        </p>
+    {% endif %}
+    
+    <form id="login_form" method="post" action="{% url django.contrib.auth.views.login %}">{% csrf_token %}
+        {{ form.username.label_tag }}&nbsp;{{ form.username }}<br />
+        {{ form.password.label_tag }}&nbsp;{{ form.password }}<br />
+        <input  style="margin-left:160px;width:156px;" class="submit" type="submit" value="Login" />
+        <input type="hidden" name="next" value="{{ next|escape }}" />
+    </form>
+
+    <br />
+    <a href="{% url django.contrib.auth.views.password_reset %}">Passwort vergessen?</a>
+{% endblock %}

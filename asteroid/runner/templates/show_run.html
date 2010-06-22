@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 
-{% load correct_status %}
+{% load correct_status guardian_tags %}
 
 {% block title %}{{run}}{% endblock %}
 
 {% block content %}
 
+{% get_obj_perms request.user for run.command as "runner_command_permissions" %}
+{% if "execute_command" in runner_command_permissions %}
 <section class="run">
 
   <nav>
@@ -21,5 +23,6 @@
   <pre>{{run.output}}</pre>
   {% endif %}
 </section>
+{% endif %}
 
 {% endblock %}

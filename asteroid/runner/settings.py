@@ -6,7 +6,6 @@ ROOT = os.path.abspath(os.path.dirname(__file__))
 # Used to translate every path in settings.py to an absolute path.
 path = lambda x: os.path.join(ROOT, x)
 
-ADMINS = ( ('', ''), )
 MANAGERS = ADMINS
 TIME_ZONE = 'Europe/Berlin'
 LANGUAGE_CODE = 'de-de'
@@ -16,8 +15,6 @@ USE_I18N = False
 MEDIA_ROOT = path('../media')
 MEDIA_URL = '/media'
 ADMIN_MEDIA_PREFIX = '/media/admin/'
-
-SECRET_KEY = 'yqci=(=-#y#_=-!#rl_9!0z+^n=+c+gb-#w1i6s7!knoc9b1oy'
 
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
@@ -60,14 +57,33 @@ INSTALLED_APPS = (
     'guardian',
 )
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+# ignore django code when we calculate coverage
+EXCLUDE_FROM_COVERAGE = ['django']
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
+)
+ANONYMOUS_USER_ID = -1
+LOGIN_URL="/login/"
+LOGIN_EXEMPT_URLS = (
+    r'^admin/',
+    r'^media/',
+    r'^login/',
+    r'^logout/',
+    r'^auth/',
+) 
+
+# the following variables should be overwritten in settings_local.py
+ADMINS = ( ('', ''), )
+SECRET_KEY = 'yqci=(=-#y#_=-!#rl_9!0z+^n=+c+gb-#w1i6s7!knoc9b1oy'
 DATABASES = { 'default': { 'NAME': path('../dev.db'), 'ENGINE': 'django.db.backends.sqlite3', } }
+DEBUG = True
 
 # run "python -m smtpd -n -c DebuggingServer localhost:1025" to see outgoing
 # messages dumped to the terminal
 EMAIL_HOST = 'localhost'
-EMAIL_PORT = 1025
+#EMAIL_PORT = 1025
 DEFAULT_FROM_EMAIL = 'webmaster@localhost'
 
 # application specific commands
@@ -78,16 +94,7 @@ QUEUE_COMMANDS=False
 # used for the callback
 DOMAIN = "http://localhost:8020"
 
-# ignore django code when we calculate coverage
-EXCLUDE_FROM_COVERAGE = ['django']
+try: from settings_local import *
+except: pass
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'guardian.backends.ObjectPermissionBackend',
-)
-ANONYMOUS_USER_ID = -1
-LOGIN_URL="/admin"
-LOGIN_EXEMPT_URLS = (
-    r'^admin/',
-    r'^media/', # allow the entire /media/* subsection
-) 
+TEMPLATE_DEBUG = DEBUG
