@@ -37,7 +37,7 @@ section>footer {
 }
 section>footer a {
     color: #CCC;
-} 
+}
 section#main {
     width: 90%;
     margin: 0 auto;
@@ -105,7 +105,7 @@ li.failed a {
     color: #FFF;
     padding: 1px 15px;
     font-size: 75%;
-    
+
 }
 .commands li a.button:hover {
     background: #ACACAC;
@@ -133,7 +133,7 @@ section.run nav {
     font-size: 75%;
 }
 section.run nav a {
-     color: #CCC;   
+     color: #CCC;
 }
 
 pre {
